@@ -33,6 +33,11 @@
     <img src="https://github.com/VRS-Predmet/vrs_cvicenie_7/blob/master/images/dma_config1.PNG" width="650">
 </p>
 
+- konfigurácia USART2 sa nelíši od konfigurácie z predchádzajúceho cvičenia
+- V NVIC je potrebné povoliť prerušenia pre DMA(všetky používané kanály) aj USART2
+
+- v ukážkovom kóde je navyše ku vygenerovanému kódu ešte doplňené povolenie konkrétnych prerušení pre DMA a USART (IDLE, HT, TC), priradenie pamäťového miesta pre príjem dát a samotné zapnutie DMA pre obsluhu USART2 Rx a Tx 
+
 # Zadanie
 - Doimplemetovať chýbajúce častí šablóny programu, vďaka ktorému bude MCU komunikovať s PC prostredníctvom USART2 s využitím DMA.
 - Okrem spracovania prijatých dát bude program pravidelne posielať informácie o aktuálnom vyťažení pamäte, ktorú využíva DMA pre dáta prijaté cez USART.
@@ -52,9 +57,3 @@
  6. V subore "Src/main.c" implementovať periodické odosielanie dát o aktuálnom stave DMA Rx buffera cez USART2 do PC. Formát spravý a frekvencia posielania sú špecifikované inštrukciami v komentáry vo while slučke. Implementácia periodického odoielania môže byť priamo vo while slučke poprípade si môžete vytvoriť vlastnú funkciu, ktorú budete vo while slučke volať. V tomto smere máte voľnú ruku. Podstatné je, aby odosielané dáta boli zobraziteľné v PC pomocou terminálu.
  
  7. Odovzdáva sa odkaz k vašemu repozitáru.
-
-
-- konfigurácia USART2 sa nelíši od konfigurácie z predchádzajúceho cvičenia
-- V NVIC je potrebné povoliť prerušenia pre DMA(všetky používané kanály) aj USART2
-
-- v ukážkovom kóde je navyše ku vygenerovanému kódu ešte doplňené povolenie konkrétnych prerušení pre DMA a USART (IDLE, HT, TC), priradenie pamäťového miesta pre príjem dát a samotné zapnutie DMA pre obsluhu USART2 Rx a Tx 
