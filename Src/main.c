@@ -38,7 +38,8 @@ void proccesDmaData(uint8_t sign);
 
 /* Space for your global variables. */
 
-	// type your global variables here:
+uint8_t small = 0;
+uint8_t big = 0;
 
 
 int main(void)
@@ -111,9 +112,33 @@ void SystemClock_Config(void)
  */
 void proccesDmaData(uint8_t sign)
 {
-	/* Process received data */
+	uint8_t counter = 0;
+	uint8_t go = 0;
 
-		// type your algorithm here:
+	if (sign == '#') {
+		go == 1;
+	}
+
+	if (go) {
+		if (sign != '$') {
+			if (++counter >= 35) {
+				counter = 0; go = 0;
+				break;
+			}
+
+			if(sign >= 'A' && sign <= 'Z') {
+				big++;
+			}
+
+			if(sign >= 'a' && sign <= 'z') {
+				small++;
+			}
+		}
+
+		else {
+			go = 0; counter = 0;
+		}
+	}
 }
 
 
