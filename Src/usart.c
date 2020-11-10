@@ -24,7 +24,7 @@
 uint8_t bufferUSART2dma[DMA_USART2_BUFFER_SIZE];
 
 /* Declaration and initialization of callback function */
-static void (* USART2_ProcessData)(uint8_t data) = 0;
+static void (* USART2_ProcessData)(uint8_t* sign, uint16_t len) = 0;
 
 /* Register callback */
 void USART2_RegisterCallback(void *callback)
@@ -162,16 +162,16 @@ void USART2_CheckDmaReception(void)
 
 	uint16_t pos = DMA_USART2_BUFFER_SIZE - LL_DMA_GetDataLength(DMA1, LL_DMA_CHANNEL_6);
 
-	if (pos != old_pos && pos <= 20) {
+	if (pos != old_pos) {
 		if (pos > old_pos) {
-			USART2_ProcessData(&bufferUSART2dma[old_pos]);
+			USART2_ProcessData(&bufferUSART2dma[old_pos], pos - old_pos);
 		}
 
 		else {
-			USART2_ProcessData(&bufferUSART2dma[old_pos]);
+			USART2_ProcessData(&bufferUSART2dma[old_pos], DMA_USART2_BUFFER_SIZE - old_pos);
 
 			if (pos > 0) {
-				USART2_ProcessData(&bufferUSART2dma[0]);
+				USART2_ProcessData(&bufferUSART2dma[0], pos);
 			}
 		}
 	}

@@ -34,7 +34,7 @@ void SystemClock_Config(void);
  *
  * @param1 - received sign
  */
-void proccesDmaData(uint8_t sign);
+void proccesDmaData(uint8_t* sign, uint16_t len);
 
 
 /* Space for your global variables. */
@@ -119,37 +119,40 @@ void SystemClock_Config(void)
 /*
  * Implementation of function processing data received via USART.
  */
-void proccesDmaData(uint8_t sign)
+void proccesDmaData(uint8_t* sign, uint16_t len)
 {
-	if (sign == '#') {
-		go = 1;
-	}
+	for(uint8_t i = 0; i < len; i++) {
+		if (*(sign+i) == '#') {
+			go = 1;
+			continue;
+		}
 
-	if (go) {
-		if (sign != '$') {
-			if (++counter >= 35) {
-				letters.capital_letter = 0; letters.small_letter = 0;
-				counter = 0; go = 0;
+		if (go) {
+			if (*(sign+i) != '$') {
+				if (++counter >= 35) {
+					letters.capital_letter = 0; letters.small_letter = 0;
+					counter = 0; go = 0;
+				}
+
+				else {
+					if(*(sign+i) >= 'A' && *(sign+i) <= 'Z') {
+						letters.capital_letter++;
+					}
+
+					if(*(sign+i) >= 'a' && *(sign+i) <= 'z') {
+						letters.small_letter++;
+					}
+				}
 			}
 
 			else {
-				if(sign >= 'A' && sign <= 'Z') {
-					letters.small_letter++;
-				}
+				snprintf(tx_data, sizeof(tx_data), "Capital letters: %d\n\rSmall letters: %d\n\r",
+						letters.capital_letter, letters.small_letter);
+				USART2_PutBuffer(tx_data, sizeof(tx_data));
 
-				if(sign >= 'a' && sign <= 'z') {
-					letters.capital_letter++;
-				}
+				letters.capital_letter = 0; letters.small_letter = 0;
+				go = 0; counter = 0;
 			}
-		}
-
-		else {
-//			snprintf(tx_data, sizeof(tx_data), "Capital letters: %d\n\rSmall letters: %d\n\r",
-//					letters.capital_letter, letters.small_letter);
-//			USART2_PutBuffer(tx_data, sizeof(tx_data));
-
-			letters.capital_letter = 0; letters.small_letter = 0;
-			go = 0; counter = 0;
 		}
 	}
 }
