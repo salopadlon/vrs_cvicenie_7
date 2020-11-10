@@ -23,6 +23,7 @@
 #include "dma.h"
 #include "usart.h"
 #include "gpio.h"
+#include <stdio.h>
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
@@ -38,9 +39,10 @@ void proccesDmaData(uint8_t sign);
 
 /* Space for your global variables. */
 
-uint8_t small = 0;
-uint8_t big = 0;
-
+letter_count_ letters;
+uint8_t tx_data[128];
+uint8_t counter = 0;
+uint8_t go = 0;
 
 int main(void)
 {
@@ -60,7 +62,7 @@ int main(void)
 
   /* Space for your local variables, callback registration ...*/
 
-  	  //type your code here:
+  USART2_RegisterCallback(proccesDmaData);
 
   while (1)
   {
@@ -70,7 +72,14 @@ int main(void)
 	   * Example message (what I wish to see in terminal) - Buffer capacity: 1000 bytes, occupied memory: 231 bytes, load [in %]: 23.1%
 	   */
 
-  	  	  	  //type your code here:
+	  uint8_t occupied_memory = DMA_USART2_BUFFER_SIZE - LL_DMA_GetDataLength(DMA1, LL_DMA_CHANNEL_6);
+	  float load = occupied_memory / DMA_USART2_BUFFER_SIZE * 100;
+
+	  snprintf(tx_data, sizeof(tx_data), "Buffer capacity: %d bytes, occupied memory: %d bytes, load: %f %%\n\r",
+			  DMA_USART2_BUFFER_SIZE, occupied_memory, load);
+	  USART2_PutBuffer(tx_data, sizeof(tx_data));
+
+	  LL_mDelay(200);
   }
   /* USER CODE END 3 */
 }
@@ -112,30 +121,34 @@ void SystemClock_Config(void)
  */
 void proccesDmaData(uint8_t sign)
 {
-	uint8_t counter = 0;
-	uint8_t go = 0;
-
-	if (sign == '#') {
-		go == 1;
+	if ((char) sign == '#') {
+		go = 1;
 	}
 
 	if (go) {
 		if (sign != '$') {
 			if (++counter >= 35) {
+				letters.capital_letter = 0; letters.small_letter = 0;
 				counter = 0; go = 0;
-				break;
 			}
 
-			if(sign >= 'A' && sign <= 'Z') {
-				big++;
-			}
+			else {
+				if(sign >= 'A' && sign <= 'Z') {
+					letters.small_letter++;
+				}
 
-			if(sign >= 'a' && sign <= 'z') {
-				small++;
+				if(sign >= 'a' && sign <= 'z') {
+					letters.capital_letter++;
+				}
 			}
 		}
 
 		else {
+//			snprintf(tx_data, sizeof(tx_data), "Capital letters: %d\n\rSmall letters: %d\n\r",
+//					letters.capital_letter, letters.small_letter);
+//			USART2_PutBuffer(tx_data, sizeof(tx_data));
+
+			letters.capital_letter = 0; letters.small_letter = 0;
 			go = 0; counter = 0;
 		}
 	}

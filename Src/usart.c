@@ -160,12 +160,25 @@ void USART2_CheckDmaReception(void)
 
 	static uint16_t old_pos = 0;
 
+	uint16_t pos = DMA_USART2_BUFFER_SIZE - LL_DMA_GetDataLength(DMA1, LL_DMA_CHANNEL_6);
+
+	if (pos != old_pos && pos <= 20) {
+		if (pos > old_pos) {
+			USART2_ProcessData(&bufferUSART2dma[old_pos]);
+		}
+
+		else {
+			USART2_ProcessData(&bufferUSART2dma[old_pos]);
+
+			if (pos > 0) {
+				USART2_ProcessData(&bufferUSART2dma[0]);
+			}
+		}
+	}
+
 	old_pos = pos;
 
-	if (old_pos == DMA_USART2_BUFFER_SIZE)
-	{
-		return;
-	}
+	if (old_pos == DMA_USART2_BUFFER_SIZE) return;
 }
 
 
