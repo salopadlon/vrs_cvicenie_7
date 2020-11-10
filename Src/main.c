@@ -121,7 +121,7 @@ void SystemClock_Config(void)
  */
 void proccesDmaData(uint8_t sign)
 {
-	if ((char) sign == '#') {
+	if (sign == '#') {
 		go = 1;
 	}
 
