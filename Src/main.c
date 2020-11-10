@@ -73,9 +73,9 @@ int main(void)
 	   */
 
 	  uint8_t occupied_memory = DMA_USART2_BUFFER_SIZE - LL_DMA_GetDataLength(DMA1, LL_DMA_CHANNEL_6);
-	  float load = occupied_memory / DMA_USART2_BUFFER_SIZE * 100;
+	  float load = occupied_memory / (float) DMA_USART2_BUFFER_SIZE * 100;
 
-	  snprintf(tx_data, sizeof(tx_data), "Buffer capacity: %d bytes, occupied memory: %d bytes, load: %f %%\n\r",
+	  snprintf(tx_data, sizeof(tx_data), "Buffer capacity: %d bytes, occupied memory: %d bytes, load: %.2f %%\n\r",
 			  DMA_USART2_BUFFER_SIZE, occupied_memory, load);
 	  USART2_PutBuffer(tx_data, sizeof(tx_data));
 
@@ -121,6 +121,7 @@ void SystemClock_Config(void)
  */
 void proccesDmaData(uint8_t sign)
 {
+	tx_data[0] = sign;
 	if (sign == '#') {
 		go = 1;
 	}
